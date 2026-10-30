@@ -73,7 +73,8 @@ export function WorstCasePage() {
           </tbody>
         </table>
         <p className="muted">
-          1ハンドあたりのチップ。均衡の値（先手）は {presets.equilibriumValueP0.toFixed(3)} で、先手の表の最悪ケースはこれ以下、後手の表の最悪ケースは {(-presets.equilibriumValueP0).toFixed(3)} 以下。
+          1ハンドあたりのチップ。均衡の値（先手）は {presets.equilibriumValueExact.toFixed(3)}（線形計画法による厳密値。CFR {presets.cfrIterations} 回の推定は {presets.equilibriumValueP0.toFixed(3)}）で、
+          先手の表の最悪ケースはこれ以下、後手の表の最悪ケースは {(-presets.equilibriumValueExact).toFixed(3)} 以下。
         </p>
       </div>
 

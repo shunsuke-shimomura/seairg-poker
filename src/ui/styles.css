@@ -445,3 +445,55 @@ textarea {
     max-width: none;
   }
 }
+
+/* 折れ線グラフ */
+.chart {
+  margin: 0.4rem 0;
+}
+.chart .grid {
+  stroke: #e6eaf0;
+  stroke-width: 1;
+}
+.chart .axis {
+  stroke: #b8c0cc;
+  stroke-width: 1;
+}
+.chart .reference {
+  stroke: #8a94a3;
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.chart .crosshair {
+  stroke: #8a94a3;
+  stroke-width: 1;
+}
+.chart .tick {
+  fill: var(--muted);
+  font-size: 12px;
+}
+.chart .axis-label {
+  fill: var(--muted);
+  font-size: 13px;
+}
+.chart .series-label {
+  fill: var(--fg);
+  font-size: 13px;
+}
+.chart .tooltip {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  font-size: 13px;
+  line-height: 1.4;
+  display: inline-block;
+}
+html.big .chart .tick,
+html.big .chart .axis-label,
+html.big .chart .series-label,
+html.big .chart .tooltip {
+  font-size: 16px;
+}
+input[type='range'] {
+  width: 16rem;
+}

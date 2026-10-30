@@ -9,6 +9,7 @@ import { analyzeSituation, fullValueViaNodes } from './situation';
 import { runCfr } from './cfr';
 import { roundToSixths } from './search';
 import { toFraction, fmtFraction } from './fraction';
+import { StrategyAverager, iterateBestResponses, ownReach, restrictedNashResponse } from './dynamics';
 import presets from './presets.json';
 
 const b0 = baseTable(0);
@@ -139,6 +140,52 @@ describe('段階4: 再帰の先に均衡', () => {
     const br = bestResponse(near0, 1).strategy;
     const hv = handValues(near0, br, 0);
     close((hv.J + hv.Q + hv.K) / 3, expectedValue(near0, br), 1e-9);
+  });
+});
+
+describe('段階4〜5: 読み合いの力学', () => {
+  it('到達確率: 第1ラウンドの初手は必ず到達、チェック後のコール判断は 1 − ベット率', () => {
+    const r = ownReach(b0, 0);
+    for (const h of ['J', 'Q', 'K'] as const) {
+      close(r.get(`r1|bet|${h}`)!, 1, 1e-12);
+      close(r.get(`r1|call|${h}`)!, 1 - b0[`r1|bet|${h}`], 1e-12);
+    }
+  });
+  it('同じ表の平均はその表', () => {
+    const a = new StrategyAverager(1);
+    a.add(b1);
+    a.add(b1);
+    for (const k of allKeys()) close(a.average()[k], b1[k], 1e-12);
+  });
+  it('直前の表に最適応答し続けても収束しないが、平均の表に最適応答すると平均が均衡に近づく', () => {
+    const latest = iterateBestResponses([b0, b1], 60, 'latest');
+    const average = iterateBestResponses([b0, b1], 60, 'average');
+    expect(latest[59].exploitLatest).toBeGreaterThan(1);
+    expect(average[59].exploitAverage).toBeLessThan(0.4);
+    expect(average[59].exploitAverage).toBeLessThan(average[0].exploitAverage / 2);
+    expect(average[59].exploitAverage).toBeLessThan(latest[59].exploitAverage);
+  });
+  it('RNR: p=1 は最適応答に、p=0 は均衡に一致する', () => {
+    const br = bestResponse(b0, 1).value;
+    const r1 = restrictedNashResponse(b0, 0, 1, 500);
+    close(r1.vsModel, br, 0.03);
+    const r0 = restrictedNashResponse(b0, 0, 0, 1500);
+    expect(r0.worst).toBeGreaterThan(-presets.equilibriumValueExact - 0.04);
+    expect(r0.worst).toBeGreaterThan(r1.worst + 1);
+  });
+  it('プリセットの均衡値は線形計画法の厳密値と整合し、RNR の曲線は攻めと守りのトレードオフになっている', () => {
+    close(presets.equilibriumValueExact, -0.0781, 0.0005);
+    expect(Math.abs(presets.equilibriumValueP0 - presets.equilibriumValueExact)).toBeLessThan(0.005);
+    for (const id of ['base-0', 'base-1'] as const) {
+      const curve = presets.rnr[id];
+      expect(curve[0].p).toBe(0);
+      expect(curve[curve.length - 1].p).toBe(1);
+      expect(curve[curve.length - 1].vsModel).toBeGreaterThan(curve[0].vsModel + 0.1);
+      expect(curve[0].worst).toBeGreaterThan(curve[curve.length - 1].worst + 0.5);
+    }
+    const it = presets.iterate;
+    expect(it.average[it.steps - 1][1]).toBeLessThan(0.15);
+    expect(it.latest[it.steps - 1][0]).toBeGreaterThan(1);
   });
 });
 

@@ -11,13 +11,14 @@ import { BestResponsePage } from './pages/BestResponsePage';
 import { HandEvPage } from './pages/HandEvPage';
 import { WorstCasePage } from './pages/WorstCasePage';
 import { EquilibriumPage } from './pages/EquilibriumPage';
+import { TradeoffPage } from './pages/TradeoffPage';
 import { WorksheetPage } from './pages/WorksheetPage';
 
 const render = (el: React.ReactElement) => renderToString(<StoreProvider>{el}</StoreProvider>);
 
 describe('ページの煙テスト', () => {
   it('ホーム', () => {
-    expect(render(<HomePage />)).toContain('6段階');
+    expect(render(<HomePage />)).toContain('7段階');
   });
   it('局面計算（問1の初期状態）', () => {
     const html = render(<SituationPage />);
@@ -30,6 +31,7 @@ describe('ページの煙テスト', () => {
     const html = render(<BestResponsePage />);
     expect(html).toContain('+0.27');
     expect(html).toContain('対策の連鎖');
+    expect(html).toContain('これまでの平均');
   });
   it('手札別の期待値', () => {
     const html = render(<HandEvPage />);
@@ -43,6 +45,12 @@ describe('ページの煙テスト', () => {
   });
   it('均衡を求める', () => {
     expect(render(<EquilibriumPage />)).toContain('CFR');
+  });
+  it('攻めと守り（基本表の先手をモデルに、後手の RNR 曲線）', () => {
+    const html = render(<TradeoffPage />);
+    expect(html).toContain('Restricted Nash Response');
+    expect(html).toContain('均衡からズレを見て離れる');
+    expect(html).toContain('+0.54'); // p=1 の攻め＝基本表への最適応答
   });
   it('表を作る', () => {
     expect(render(<TablesPage />)).toContain('基本表（先手）');

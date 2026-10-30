@@ -6,15 +6,17 @@ import { BestResponsePage } from './pages/BestResponsePage';
 import { HandEvPage } from './pages/HandEvPage';
 import { WorstCasePage } from './pages/WorstCasePage';
 import { EquilibriumPage } from './pages/EquilibriumPage';
+import { TradeoffPage } from './pages/TradeoffPage';
 import { WorksheetPage } from './pages/WorksheetPage';
 
 export const ROUTES: { path: string; label: string; stage: string }[] = [
   { path: '/', label: 'ホーム', stage: '' },
   { path: '/situation', label: '局面計算', stage: '段階1・2' },
-  { path: '/best-response', label: '最適応答', stage: '段階2・4' },
+  { path: '/best-response', label: '最適応答', stage: '段階2〜4' },
   { path: '/hand-ev', label: '手札別の期待値', stage: '段階3' },
   { path: '/worst-case', label: '最悪ケース', stage: '段階4' },
   { path: '/equilibrium', label: '均衡を求める', stage: '段階4' },
+  { path: '/tradeoff', label: '攻めと守り', stage: '段階5' },
   { path: '/tables', label: '表を作る', stage: '' },
   { path: '/worksheet', label: '問題用紙', stage: '印刷' },
 ];
@@ -71,6 +73,9 @@ export function App() {
       break;
     case '/equilibrium':
       page = <EquilibriumPage />;
+      break;
+    case '/tradeoff':
+      page = <TradeoffPage />;
       break;
     case '/tables':
       page = <TablesPage />;

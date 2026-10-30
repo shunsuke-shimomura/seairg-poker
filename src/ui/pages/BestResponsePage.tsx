@@ -5,6 +5,7 @@ import { bestResponse, counterChain, worstCase } from '../../engine/bestResponse
 import { BASE_ID, positionLabel, useStore } from '../store';
 import { Ev, TableSelect } from '../components/common';
 import { StrategyTable, describeKey } from '../components/StrategyTable';
+import { IterateSection } from '../components/IterateSection';
 
 export function BestResponsePage() {
   const store = useStore();
@@ -40,7 +41,7 @@ export function BestResponsePage() {
   return (
     <div>
       <h1>最適応答</h1>
-      <p className="lead">相手の表を固定し、第2ラウンドから後ろ向きにすべてのマスを最善にした表。段階2（基本表への最適応答）と段階4（対策の連鎖）で使う。</p>
+      <p className="lead">相手の表を固定し、第2ラウンドから後ろ向きにすべてのマスを最善にした表。段階2（基本表への最適応答）、段階3（対策の連鎖）、段階4（読み合いの平均）で使う。</p>
 
       <div className="controls">
         <TableSelect label="突く相手の表" value={target.id} onChange={setTargetId} />
@@ -120,7 +121,7 @@ export function BestResponsePage() {
       </div>
 
       <h2>対策の連鎖</h2>
-      <p className="muted">ある表から始めて、最適応答を交互にとる。相手を突くたびに大きく勝ち、突かれるたびに大きく負ける。</p>
+      <p className="muted">ある表から始めて、相手の直前の表への最適応答を交互にとる。相手を突くたびに大きく勝ち、突かれるたびに大きく負ける。何段続けても落ち着かない。</p>
       <div className="controls">
         <TableSelect label="出発点の表" value={chainStart.id} onChange={setChainStartId} />
         <label className="field">
@@ -183,6 +184,8 @@ export function BestResponsePage() {
           </span>
         </div>
       )}
+
+      <IterateSection />
     </div>
   );
 }
